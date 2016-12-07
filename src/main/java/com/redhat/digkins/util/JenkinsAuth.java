@@ -2,6 +2,8 @@ package com.redhat.digkins.util;
 
 /**
  * Jenkins authentication object.
+ * <p>
+ * Holds credentials in it.
  */
 public class JenkinsAuth {
 

@@ -9,9 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * Digger Java Client
- * <p>
- * Interact with digger jenkins api!
+ * Digger Java Client interact with Digger Jenkins api.
  */
 public class DiggerClient {
 
@@ -22,11 +20,30 @@ public class DiggerClient {
   }
 
   /**
-   * Create new digger job on jenkins platform
+   * Create client using provided url and credentials
    *
-   * @param name      - job name that can be used later to reference job
-   * @param gitRepo   - git repository url (full git repository url. e.g git@github.com:wtrocki/helloworld-android-gradle.git
-   * @param gitBranch - git repository branch (default branch used to checkout source code)
+   * @param url      Jenkins url
+   * @param user     Jenkins user
+   * @param password Jenkins password
+   * @return client instance
+   * @throws DiggerClientException if something goes wrong
+   */
+  public static DiggerClient from(String url, String user, String password) throws DiggerClientException {
+    try {
+      JenkinsAuth jenkinsAuth = new JenkinsAuth(url, user, password);
+      return new DiggerClient(jenkinsAuth);
+    } catch (URISyntaxException e) {
+      throw new DiggerClientException("Invalid jenkins url format.");
+    }
+  }
+
+  /**
+   * Create new Digger job on Jenkins platform
+   *
+   * @param name      job name that can be used later to reference job
+   * @param gitRepo   git repository url (full git repository url. e.g git@github.com:wtrocki/helloworld-android-gradle.git
+   * @param gitBranch git repository branch (default branch used to checkout source code)
+   * @throws DiggerClientException if something goes wrong
    */
   public void createJob(String name, String gitRepo, String gitBranch) throws DiggerClientException {
     CreateJobService service = new CreateJobService(this.jenkins);
@@ -37,20 +54,4 @@ public class DiggerClient {
     }
   }
 
-  /**
-   * Create client using provided url and credentials
-   *
-   * @param url      - jenkins url
-   * @param user     - jenkins user
-   * @param password - jenkins password
-   * @return client instance
-   */
-  public static DiggerClient from(String url, String user, String password) throws DiggerClientException {
-    try {
-      JenkinsAuth jenkinsAuth = new JenkinsAuth(url, user, password);
-      return new DiggerClient(jenkinsAuth);
-    } catch (URISyntaxException e) {
-      throw new DiggerClientException("Invalid jenkins url format.");
-    }
-  }
 }

@@ -1,7 +1,5 @@
 package com.redhat.digkins.util;
 
-import java.util.TreeMap;
-
 /**
  * Represents internal client exception
  */
