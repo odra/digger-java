@@ -21,13 +21,23 @@
         <dependency>
             <groupId>com.offbytwo.jenkins</groupId>
             <artifactId>jenkins-client</artifactId>
-            <version>0.3.6</version>
+            <version>0.3.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.jtwig</groupId>
             <artifactId>jtwig-core</artifactId>
             <version>5.65</version>
         </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.21</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.7.21</version>
+      </dependency>
     </dependencies>
     <repositories>
         <repository>
