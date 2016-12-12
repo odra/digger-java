@@ -19,36 +19,40 @@ public class TriggerBuildService {
   private static final Logger LOG = LoggerFactory.getLogger(TriggerBuildService.class);
 
   /**
-   * How long should we wait before we start checking the queue item status.
+   * Default value of {@link #firstCheckDelay}
    */
-  public static final long FIRST_CHECK_DELAY = 5 * 1000L;
+  public static final long DEFAULT_FIRST_CHECK_DELAY = 5 * 1000L;
 
   /**
-   * How long should we wait before checking the queue item status for next time.
+   * Default value of {@link #pollPeriod}
    */
-  public static final long POLL_PERIOD = 2 * 1000L;
+  public static final long DEFAULT_POLL_PERIOD = 2 * 1000L;
 
 
-  private JenkinsServer jenkinsServer;
+  private long firstCheckDelay;
+  private long pollPeriod;
 
   /**
-   * @param jenkinsServer jenkins api instance
+   * @param firstCheckDelay how long should we wait (in milliseconds) before we start checking the queue item status
+   * @param pollPeriod      how long should we wait (in milliseconds) before checking the queue item status for next time
    */
-  public TriggerBuildService(JenkinsServer jenkinsServer) {
-    this.jenkinsServer = jenkinsServer;
+  public TriggerBuildService(long firstCheckDelay, long pollPeriod) {
+    this.firstCheckDelay = firstCheckDelay;
+    this.pollPeriod = pollPeriod;
   }
 
   /**
    * See the documentation in {@link com.redhat.digkins.DiggerClient#build(String, long)}
    *
-   * @param jobName name of the job
-   * @param timeout timeout
+   * @param jenkinsServer Jenkins server client
+   * @param jobName       name of the job
+   * @param timeout       timeout
    * @return the build status
    * @throws IOException          if connection problems occur during connecting to Jenkins
    * @throws InterruptedException if a problem occurs during sleeping between checks
    * @see com.redhat.digkins.DiggerClient#build(String, long)
    */
-  public BuildStatus build(String jobName, long timeout) throws IOException, InterruptedException {
+  public BuildStatus build(JenkinsServer jenkinsServer, String jobName, long timeout) throws IOException, InterruptedException {
     final long whenToTimeout = System.currentTimeMillis() + timeout;
 
     LOG.debug("Going to build job with name: {}", jobName);
@@ -72,8 +76,8 @@ public class TriggerBuildService {
     // do it until we have an executable.
     // we would have an executable when the build leaves queue and starts building.
 
-    LOG.debug("Going to sleep {} msecs", FIRST_CHECK_DELAY);
-    Thread.sleep(FIRST_CHECK_DELAY);
+    LOG.debug("Going to sleep {} msecs", firstCheckDelay);
+    Thread.sleep(firstCheckDelay);
 
     QueueItem queueItem;
     while (true) {
@@ -107,8 +111,8 @@ public class TriggerBuildService {
       } else {
         LOG.debug("Build did not start executing yet.");
         if (whenToTimeout > System.currentTimeMillis()) {
-          LOG.debug("Timeout period has not exceeded yet. Sleeping for {} msecs", POLL_PERIOD);
-          Thread.sleep(POLL_PERIOD);
+          LOG.debug("Timeout period has not exceeded yet. Sleeping for {} msecs", pollPeriod);
+          Thread.sleep(pollPeriod);
         } else {
           LOG.debug("Timeout period has exceeded. Returning TIMED_OUT.");
           return new BuildStatus(BuildStatus.State.TIMED_OUT, -1);

@@ -4,6 +4,20 @@ A java integration library for AeroGear Digger
 
 ## Usage
 
+Build a default client:
+```
+   DiggerClient client = DiggerClient.createDefaultWithAuth("https://digger.com", "admin", "password");
+```
+
+Build a customized client:
+```
+   DiggerClient client = DiggerClient.builder()
+         .createJobService(new CreateJobService())
+         .triggerBuildService(new TriggerBuildService(10000, 100))
+         .withAuth("https://digger.com", "admin", "password")
+         .build();
+```
+
 Create job:
 
 ```
