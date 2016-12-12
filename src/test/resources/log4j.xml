@@ -11,7 +11,7 @@
     </appender>
 
     <logger name="com.redhat.digkins">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
     </logger>
 
     <root>

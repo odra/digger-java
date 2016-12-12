@@ -11,6 +11,13 @@ Create job:
   client.createJob("java-client-job1","https://github.com/wtrocki/helloworld-android-gradle","master");
 ```
 
+Trigger a job:
+
+```
+  ...
+  BuildStatus buildStatus = client.build("java-client-job1");
+```
+
 ## Requirements
 
 Client works with Java6 and above.
@@ -18,3 +25,4 @@ Client works with Java6 and above.
 ## Building
 
 `mvn clean package`
+
