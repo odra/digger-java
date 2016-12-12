@@ -11,10 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.assertj.core.api.Assertions.*;
-
 import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,27 +31,27 @@ public class TriggerBuildServiceTest {
 
   @Before
   public void setUp() throws Exception {
-    service = new TriggerBuildService(jenkinsServer);
+    service = new TriggerBuildService(300, 50);   // wait for 300 msecs for initial build, check every 50 msecs
 
     Mockito.when(jenkinsServer.getJob("TEST")).thenReturn(mockJob);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowExceptionIfJobCannotBeFound() throws Exception {
-    service.build("UNKNOWN", 10000);
+    service.build(jenkinsServer, "UNKNOWN", 10000);
   }
 
   @Test(expected = IllegalStateException.class)
   public void shouldThrowExceptionIfJenkinsDoesNotReturnQueueReference() throws Exception {
     Mockito.when(mockJob.build()).thenReturn(null);
-    service.build("TEST", 10000);
+    service.build(jenkinsServer, "TEST", 10000);
   }
 
   @Test(expected = IllegalStateException.class)
   public void shouldThrowExceptionIfQueueItemIsNullForReference() throws Exception {
     Mockito.when(mockJob.build()).thenReturn(queueReference);
     Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(null);
-    service.build("TEST", 10000);
+    service.build(jenkinsServer, "TEST", 10000);
   }
 
   @Test
@@ -63,7 +62,7 @@ public class TriggerBuildServiceTest {
     Mockito.when(mockJob.build()).thenReturn(queueReference);
     Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItem);
 
-    final BuildStatus buildStatus = service.build("TEST", 10000);
+    final BuildStatus buildStatus = service.build(jenkinsServer, "TEST", 10000);
     assertThat(buildStatus).isNotNull();
     assertThat(buildStatus.getState()).isEqualTo(BuildStatus.State.CANCELLED_IN_QUEUE);
   }
@@ -76,7 +75,7 @@ public class TriggerBuildServiceTest {
     Mockito.when(mockJob.build()).thenReturn(queueReference);
     Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItem);
 
-    final BuildStatus buildStatus = service.build("TEST", 10000);
+    final BuildStatus buildStatus = service.build(jenkinsServer, "TEST", 10000);
     assertThat(buildStatus).isNotNull();
     assertThat(buildStatus.getState()).isEqualTo(BuildStatus.State.STUCK_IN_QUEUE);
   }
@@ -90,7 +89,7 @@ public class TriggerBuildServiceTest {
 
     Mockito.when(mockJob.build()).thenReturn(queueReference);
     Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItem);
-    final BuildStatus buildStatus = service.build("TEST", 10000);
+    final BuildStatus buildStatus = service.build(jenkinsServer, "TEST", 10000);
 
     assertThat(buildStatus).isNotNull();
     assertThat(buildStatus.getState()).isEqualTo(BuildStatus.State.BUILDING);
@@ -108,7 +107,7 @@ public class TriggerBuildServiceTest {
     Mockito.when(mockJob.build()).thenReturn(queueReference);
     // return `not-building` for the first 2 checks, then return `building`
     Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItemNotBuildingYet, queueItemNotBuildingYet, queueItemBuilding);
-    final BuildStatus buildStatus = service.build("TEST", 20000L);
+    final BuildStatus buildStatus = service.build(jenkinsServer, "TEST", 10000L);
 
     assertThat(buildStatus).isNotNull();
     assertThat(buildStatus.getState()).isEqualTo(BuildStatus.State.BUILDING);
@@ -123,7 +122,7 @@ public class TriggerBuildServiceTest {
 
     Mockito.when(mockJob.build()).thenReturn(queueReference);
     Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItemNotBuildingYet);
-    final BuildStatus buildStatus = service.build("TEST", 10000L);
+    final BuildStatus buildStatus = service.build(jenkinsServer, "TEST", 500L);
 
     assertThat(buildStatus).isNotNull();
     assertThat(buildStatus.getState()).isEqualTo(BuildStatus.State.TIMED_OUT);
