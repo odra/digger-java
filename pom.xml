@@ -18,16 +18,48 @@
     </licenses>
 
     <dependencies>
+      <!--Compile time-->
         <dependency>
             <groupId>com.offbytwo.jenkins</groupId>
             <artifactId>jenkins-client</artifactId>
-            <version>0.3.6</version>
+            <version>0.3.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.jtwig</groupId>
             <artifactId>jtwig-core</artifactId>
             <version>5.65</version>
         </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.21</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.7.21</version>
+      </dependency>
+
+      <!--Testing-->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>1.10.19</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.6.1</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
     <repositories>
         <repository>
@@ -35,6 +67,7 @@
             <url>https://jcenter.bintray.com/</url>
         </repository>
     </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -46,6 +79,11 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.12.4</version>
+          </plugin>
         </plugins>
     </build>
 </project>
