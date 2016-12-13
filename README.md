@@ -13,7 +13,7 @@ Build a customized client:
 ```
    DiggerClient client = DiggerClient.builder()
          .jobService(new JobService())
-         .triggerBuildService(new BuildService(10000, 100))
+         .buildService(new BuildService(10000, 100))
          .artifactsService(artifactsService)
          .withAuth("https://digger.com", "admin", "password")
          .build();

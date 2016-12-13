@@ -1,11 +1,11 @@
-package com.redhat.digkins.services;
+package org.aerogear.digger.services;
 
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.Executable;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueItem;
 import com.offbytwo.jenkins.model.QueueReference;
-import com.redhat.digkins.model.BuildStatus;
+import org.aerogear.digger.model.BuildStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,9 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class TriggerBuildServiceTest {
+public class BuildServiceTest {
 
-  private TriggerBuildService service;
+  private BuildService service;
 
   @Mock
   JenkinsServer jenkinsServer;
@@ -31,7 +31,7 @@ public class TriggerBuildServiceTest {
 
   @Before
   public void setUp() throws Exception {
-    service = new TriggerBuildService(300, 50);   // wait for 300 msecs for initial build, check every 50 msecs
+    service = new BuildService(300, 50);   // wait for 300 msecs for initial build, check every 50 msecs
 
     Mockito.when(jenkinsServer.getJob("TEST")).thenReturn(mockJob);
   }

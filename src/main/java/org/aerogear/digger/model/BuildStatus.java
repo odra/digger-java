@@ -1,4 +1,4 @@
-package com.redhat.digkins.model;
+package org.aerogear.digger.model;
 
 /**
  * Represents the status of a build.

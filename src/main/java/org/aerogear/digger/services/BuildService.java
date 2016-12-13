@@ -1,11 +1,12 @@
-package com.redhat.digkins.services;
+package org.aerogear.digger.services;
 
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.Executable;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueItem;
 import com.offbytwo.jenkins.model.QueueReference;
-import com.redhat.digkins.model.BuildStatus;
+import org.aerogear.digger.DiggerClient;
+import org.aerogear.digger.model.BuildStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +15,9 @@ import java.io.IOException;
 /**
  * Provides functionality to trigger a build.
  **/
-public class TriggerBuildService {
+public class BuildService {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TriggerBuildService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BuildService.class);
 
   /**
    * Default value of {@link #firstCheckDelay}
@@ -36,13 +37,13 @@ public class TriggerBuildService {
    * @param firstCheckDelay how long should we wait (in milliseconds) before we start checking the queue item status
    * @param pollPeriod      how long should we wait (in milliseconds) before checking the queue item status for next time
    */
-  public TriggerBuildService(long firstCheckDelay, long pollPeriod) {
+  public BuildService(long firstCheckDelay, long pollPeriod) {
     this.firstCheckDelay = firstCheckDelay;
     this.pollPeriod = pollPeriod;
   }
 
   /**
-   * See the documentation in {@link com.redhat.digkins.DiggerClient#build(String, long)}
+   * See the documentation in {@link DiggerClient#build(String, long)}
    *
    * @param jenkinsServer Jenkins server client
    * @param jobName       name of the job
@@ -50,7 +51,7 @@ public class TriggerBuildService {
    * @return the build status
    * @throws IOException          if connection problems occur during connecting to Jenkins
    * @throws InterruptedException if a problem occurs during sleeping between checks
-   * @see com.redhat.digkins.DiggerClient#build(String, long)
+   * @see DiggerClient#build(String, long)
    */
   public BuildStatus build(JenkinsServer jenkinsServer, String jobName, long timeout) throws IOException, InterruptedException {
     final long whenToTimeout = System.currentTimeMillis() + timeout;

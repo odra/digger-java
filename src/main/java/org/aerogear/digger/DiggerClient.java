@@ -1,12 +1,12 @@
-package com.redhat.digkins;
+package org.aerogear.digger;
 
 import com.offbytwo.jenkins.JenkinsServer;
-import com.redhat.digkins.model.BuildStatus;
-import com.redhat.digkins.services.ArtifactsService;
-import com.redhat.digkins.services.JobService;
-import com.redhat.digkins.services.TriggerBuildService;
-import com.redhat.digkins.util.DiggerClientException;
-import com.redhat.digkins.util.JenkinsAuth;
+import org.aerogear.digger.model.BuildStatus;
+import org.aerogear.digger.services.ArtifactsService;
+import org.aerogear.digger.services.BuildService;
+import org.aerogear.digger.services.JobService;
+import org.aerogear.digger.util.DiggerClientException;
+import org.aerogear.digger.util.JenkinsAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class DiggerClient {
   private JenkinsServer jenkinsServer;
 
   private JobService jobService;
-  private TriggerBuildService triggerBuildService;
+  private BuildService buildService;
   private ArtifactsService artifactsService;
 
   private DiggerClient() {
@@ -46,12 +46,12 @@ public class DiggerClient {
    * @throws DiggerClientException if something goes wrong
    */
   public static DiggerClient createDefaultWithAuth(String url, String user, String password) throws DiggerClientException {
-    TriggerBuildService triggerBuildService = new TriggerBuildService(TriggerBuildService.DEFAULT_FIRST_CHECK_DELAY, TriggerBuildService.DEFAULT_POLL_PERIOD);
+    BuildService buildService = new BuildService(BuildService.DEFAULT_FIRST_CHECK_DELAY, BuildService.DEFAULT_POLL_PERIOD);
     JobService jobService = new JobService();
     ArtifactsService artifactsService = new ArtifactsService();
     return DiggerClient.builder()
       .createJobService(jobService)
-      .triggerBuildService(triggerBuildService)
+      .triggerBuildService(buildService)
       .artifactsService(artifactsService)
       .withAuth(url, user, password)
       .build();
@@ -63,7 +63,7 @@ public class DiggerClient {
   public static class DiggerClientBuilder {
     private JenkinsAuth auth;
     private JobService jobService;
-    private TriggerBuildService triggerBuildService;
+    private BuildService buildService;
     private ArtifactsService artifactsService;
 
     public DiggerClientBuilder withAuth(String url, String user, String password) {
@@ -76,8 +76,8 @@ public class DiggerClient {
       return this;
     }
 
-    public DiggerClientBuilder triggerBuildService(TriggerBuildService triggerBuildService) {
-      this.triggerBuildService = triggerBuildService;
+    public DiggerClientBuilder triggerBuildService(BuildService buildService) {
+      this.buildService = buildService;
       return this;
     }
 
@@ -91,7 +91,7 @@ public class DiggerClient {
       try {
         client.jenkinsServer = new JenkinsServer(new URI(auth.getUrl()), auth.getUser(), auth.getPassword());
         client.jobService = this.jobService;
-        client.triggerBuildService = this.triggerBuildService;
+        client.buildService = this.buildService;
         client.artifactsService = this.artifactsService;
         return client;
       } catch (URISyntaxException e) {
@@ -126,7 +126,7 @@ public class DiggerClient {
    * This method will block until there is a build number, or the given timeout period is passed. If the build is still in the queue
    * after the given timeout period, a {@code BuildStatus} is returned with state {@link BuildStatus.State#TIMED_OUT}.
    * <p>
-   * Please note that timeout period is never meant to be very precise. It has the resolution of {@link TriggerBuildService#DEFAULT_POLL_PERIOD} because
+   * Please note that timeout period is never meant to be very precise. It has the resolution of {@link BuildService#DEFAULT_POLL_PERIOD} because
    * timeout is checked before every pull.
    * <p>
    * Similarly, {@link BuildStatus.State#CANCELLED_IN_QUEUE} is returned if the build is cancelled on Jenkins side and
@@ -134,13 +134,13 @@ public class DiggerClient {
    *
    * @param jobName name of the job to trigger the build
    * @param timeout how many milliseconds should this call block before returning {@link BuildStatus.State#TIMED_OUT}.
-   *                Should be larger than {@link TriggerBuildService#DEFAULT_FIRST_CHECK_DELAY}
+   *                Should be larger than {@link BuildService#DEFAULT_FIRST_CHECK_DELAY}
    * @return the build status
    * @throws DiggerClientException if connection problems occur during connecting to Jenkins
    */
   public BuildStatus build(String jobName, long timeout) throws DiggerClientException {
     try {
-      return triggerBuildService.build(this.jenkinsServer, jobName, timeout);
+      return buildService.build(this.jenkinsServer, jobName, timeout);
     } catch (IOException e) {
       LOG.debug("Exception while connecting to Jenkins", e);
       throw new DiggerClientException(e);

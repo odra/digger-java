@@ -1,8 +1,8 @@
-package com.redhat.digkins;
+package org.aerogear.digger;
 
-import com.redhat.digkins.services.JobService;
-import com.redhat.digkins.services.TriggerBuildService;
-import com.redhat.digkins.util.DiggerClientException;
+import org.aerogear.digger.services.JobService;
+import org.aerogear.digger.services.BuildService;
+import org.aerogear.digger.util.DiggerClientException;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -14,7 +14,7 @@ public class Main {
   public static void main(String[] args) throws DiggerClientException, IOException {
     DiggerClient client = DiggerClient.builder()
       .createJobService(new JobService())
-      .triggerBuildService(new TriggerBuildService(10000, 100))
+      .triggerBuildService(new BuildService(10000, 100))
       .withAuth("https://jenkins-digger2.osm3.feedhenry.net", "admin", "Vu8ysYH5f2dJiLgL")
       .build();
     //client.createJob("wtr-java-tests2", "https://github.com/wtrocki/helloworld-android-gradle", "master");

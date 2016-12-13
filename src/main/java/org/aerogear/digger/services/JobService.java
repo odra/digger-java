@@ -1,4 +1,4 @@
-package com.redhat.digkins.services;
+package org.aerogear.digger.services;
 
 import com.offbytwo.jenkins.JenkinsServer;
 import org.jtwig.JtwigModel;

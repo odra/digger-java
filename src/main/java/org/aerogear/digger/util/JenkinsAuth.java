@@ -1,4 +1,4 @@
-package com.redhat.digkins.util;
+package org.aerogear.digger.util;
 
 /**
  * Jenkins authentication object.
