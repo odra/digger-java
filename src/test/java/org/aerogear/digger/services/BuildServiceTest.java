@@ -1,11 +1,9 @@
 package org.aerogear.digger.services;
 
 import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.model.Executable;
-import com.offbytwo.jenkins.model.JobWithDetails;
-import com.offbytwo.jenkins.model.QueueItem;
-import com.offbytwo.jenkins.model.QueueReference;
+import com.offbytwo.jenkins.model.*;
 import org.aerogear.digger.model.BuildStatus;
+import org.aerogear.digger.util.DiggerClientException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +12,10 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -128,6 +130,27 @@ public class BuildServiceTest {
     assertThat(buildStatus.getState()).isEqualTo(BuildStatus.State.TIMED_OUT);
 
     Mockito.verify(jenkinsServer, Mockito.atLeast(2)).getQueueItem(queueReference);
+  }
+
+  @Test(expected = DiggerClientException.class)
+  public void shouldThrowExceptionIfJobForLogsCannotBeFound() throws Exception{
+    when(jenkinsServer.getJob(anyString())).thenReturn(null);
+    service.getBuildLogs(jenkinsServer, "artifact", 1);
+  }
+
+  @Test
+  public void shouldFetchLogs() throws Exception {
+    String expectedLogs = "test";
+    JobWithDetails job = mock(JobWithDetails.class);
+    BuildWithDetails build = mock(BuildWithDetails.class);
+    when(jenkinsServer.getJob(anyString())).thenReturn(job);
+    when(job.getBuildByNumber(anyInt())).thenReturn(build);
+    when(build.details()).thenReturn(build);
+    when(build.getConsoleOutputText()).thenReturn(expectedLogs);
+
+    String logs = service.getBuildLogs(jenkinsServer, "artifact", 1);
+
+    assertThat(logs).isEqualTo(expectedLogs);
   }
 
 }

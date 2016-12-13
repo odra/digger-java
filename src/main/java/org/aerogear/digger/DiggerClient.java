@@ -60,6 +60,7 @@ public class DiggerClient {
   public static DiggerClientBuilder builder() {
     return new DiggerClientBuilder();
   }
+
   public static class DiggerClientBuilder {
     private JenkinsAuth auth;
     private JobService jobService;
@@ -170,14 +171,14 @@ public class DiggerClient {
   /**
    * Fetch artifacts urls for specific job and build number
    *
-   * @param jobName name of the job
-   * @param buildNumber job build number
+   * @param jobName      name of the job
+   * @param buildNumber  job build number
    * @param artifactName - name of the artifact to fetch - can be regexp
    * @return InputStream with file contents
    * @throws DiggerClientException - when problem with fetching artifacts from jenkins
    */
   public InputStream fetchArtifact(String jobName, int buildNumber, String artifactName) throws DiggerClientException {
-    return artifactsService.streamArtifact(jenkinsServer,jobName, buildNumber, artifactName);
+    return artifactsService.streamArtifact(jenkinsServer, jobName, buildNumber, artifactName);
   }
 
   /**
@@ -190,9 +191,21 @@ public class DiggerClient {
    * @param outputFile   file (location) used to save artifact
    *
    * @throws DiggerClientException when problem with fetching artifacts from jenkins
-   * @throws IOException when one of the files cannot be saved
+   * @throws IOException           when one of the files cannot be saved
    */
   public void saveArtifact(String jobName, int buildNumber, String artifactName, File outputFile) throws DiggerClientException, IOException {
-      artifactsService.saveArtifact(jenkinsServer,jobName, buildNumber, artifactName,outputFile);
+    artifactsService.saveArtifact(jenkinsServer, jobName, buildNumber, artifactName, outputFile);
+  }
+
+  /**
+   * Get build logs for specific job and build number
+   *
+   * @param jobName     name of the job
+   * @param buildNumber job build number
+   * @return String with file contents that can be saved or piped to socket
+   * @throws DiggerClientException when problem with fetching artifacts from jenkins
+   */
+  public String getBuildLogs(String jobName, int buildNumber) throws DiggerClientException {
+    return buildService.getBuildLogs(jenkinsServer, jobName, buildNumber);
   }
 }

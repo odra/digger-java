@@ -1,16 +1,20 @@
 package org.aerogear.digger.services;
 
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.model.Build;
+import com.offbytwo.jenkins.model.BuildWithDetails;
 import com.offbytwo.jenkins.model.Executable;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueItem;
 import com.offbytwo.jenkins.model.QueueReference;
 import org.aerogear.digger.DiggerClient;
 import org.aerogear.digger.model.BuildStatus;
+import org.aerogear.digger.util.DiggerClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+
 
 /**
  * Provides functionality to trigger a build.
@@ -40,6 +44,31 @@ public class BuildService {
   public BuildService(long firstCheckDelay, long pollPeriod) {
     this.firstCheckDelay = firstCheckDelay;
     this.pollPeriod = pollPeriod;
+  }
+
+
+  /**
+   * Get build logs for specific job and build number
+   *
+   * @param jobName     name of the job
+   * @param buildNumber job build number
+   * @return String with file contents that can be saved or piped to socket
+   * @throws DiggerClientException when problem with fetching artifacts from jenkins
+   */
+  public String getBuildLogs(JenkinsServer jenkins, String jobName, int buildNumber) throws DiggerClientException {
+    try {
+      JobWithDetails job = jenkins.getJob(jobName);
+      if (job == null) {
+        LOG.error("Cannot fetch job from jenkins {0}", jobName);
+        throw new DiggerClientException("Cannot fetch job from jenkins");
+      }
+      Build build = job.getBuildByNumber(buildNumber);
+      BuildWithDetails buildWithDetails = build.details();
+      return buildWithDetails.getConsoleOutputText();
+    } catch (IOException e) {
+      LOG.error("Problem when fetching logs for {0} {1}", jobName, buildNumber, e);
+      throw new DiggerClientException(e);
+    }
   }
 
   /**
@@ -119,7 +148,6 @@ public class BuildService {
           return new BuildStatus(BuildStatus.State.TIMED_OUT, -1);
         }
       }
-
     }
   }
 }
