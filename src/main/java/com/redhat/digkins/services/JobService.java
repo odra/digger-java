@@ -9,11 +9,10 @@ import java.io.IOException;
 /**
  * Create digger job on jenkins platform
  */
-public class CreateJobService {
+public class JobService {
 
   private final static String GIT_REPO_URL = "GIT_REPO_URL";
   private final static String GIT_REPO_BRANCH = "GIT_REPO_BRANCH";
-
   private static final String JOB_TEMPLATE_PATH = "templates/job.xml";
 
   /**
@@ -29,5 +28,4 @@ public class CreateJobService {
     JtwigModel model = JtwigModel.newModel().with(GIT_REPO_URL, gitRepo).with(GIT_REPO_BRANCH, gitBranch);
     jenkinsServer.createJob(name, template.render(model));
   }
-
 }

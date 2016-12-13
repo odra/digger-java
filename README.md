@@ -12,8 +12,9 @@ Build a default client:
 Build a customized client:
 ```
    DiggerClient client = DiggerClient.builder()
-         .createJobService(new CreateJobService())
-         .triggerBuildService(new TriggerBuildService(10000, 100))
+         .jobService(new JobService())
+         .triggerBuildService(new BuildService(10000, 100))
+         .artifactsService(artifactsService)
          .withAuth("https://digger.com", "admin", "password")
          .build();
 ```
