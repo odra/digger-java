@@ -1,0 +1,14 @@
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+notifications:
+  irc: "irc.freenode.org#aerogear"
+
+branches:
+  only:
+    - master
+
+script: "mvn verify -X"
