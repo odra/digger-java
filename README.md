@@ -17,6 +17,25 @@ A java integration library for AeroGear Digger
 |                 | [aerogear-dev](http://aerogear-dev.1069024.n5.nabble.com/) ([subscribe](https://lists.jboss.org/mailman/listinfo/aerogear-dev))  |
 | IRC:            | [#aerogear](https://webchat.freenode.net/?channels=aerogear) channel in the [freenode](http://freenode.net/) network.  |
 
+
+## Getting started
+
+For now, clone the repository and run the build:
+
+```
+mvn clean install
+```
+
+Add the following dependencies to your ```pom.xml``` file:
+
+```xml
+<dependency>
+    <groupId>org.jboss.aerogear</groupId>
+    <artifactId>digger-java-client</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
 ## Usage
 
 Build a default client:
