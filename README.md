@@ -56,15 +56,29 @@ Build a customized client:
 Create job:
 
 ```
-  DiggerClient client = DiggerClient.from("https://digger.com", "admin", "password");
   client.createJob("java-client-job1","https://github.com/wtrocki/helloworld-android-gradle","master");
 ```
 
 Trigger a job:
 
 ```
-  ...
   BuildStatus buildStatus = client.build("java-client-job1");
+```
+
+Get build logs:
+
+```
+  int buildNumber = 4;
+  String logs = client.getBuildLogs("java-client-job1", buildNumber);
+```
+
+Save artifacts to file
+
+```
+  int buildNumber = 4;
+  String artifactName="*.apk" 
+  File outputFile = ...
+  client.saveArtifact("java-client-job1", buildNumber,artifactName, outputFile);
 ```
 
 ## Requirements
