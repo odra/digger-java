@@ -18,7 +18,7 @@
     <properties>
       <junit.version>4.11</junit.version>
       <mockito-core.version>1.9.5</mockito-core.version>
-      <jenkins.client.version>0.3.7-SNAPSHOT</jenkins.client.version>
+      <jenkins.client.version>0.3.7</jenkins.client.version>
       <jtwig.templates.version>5.65</jtwig.templates.version>
       <slf4j.api.version>1.7.21</slf4j.api.version>
       <slf4j-log4j12.version>1.7.21</slf4j-log4j12.version>
