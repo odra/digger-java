@@ -10,7 +10,7 @@
         </layout>
     </appender>
 
-    <logger name="com.redhat.digkins">
+    <logger name="org.aerogear.digger">
         <level value="DEBUG"/>
     </logger>
 
