@@ -11,7 +11,7 @@ A java integration library for AeroGear Digger
 | --------------- | ------------- |
 | License:        | Apache License, Version 2.0  |
 | Build:          | Maven  |
-| Documentation:  | https://github.com/aerogear/digger-jenkins  |
+| Documentation:  | https://github.com/aerogear/digger-java  |
 | Issue tracker:  | https://issues.jboss.org/browse/AGDIGGER  |
 | Mailing lists:  | [aerogear-users](http://aerogear-users.1116366.n5.nabble.com/) ([subscribe](https://lists.jboss.org/mailman/listinfo/aerogear-users))  |
 |                 | [aerogear-dev](http://aerogear-dev.1069024.n5.nabble.com/) ([subscribe](https://lists.jboss.org/mailman/listinfo/aerogear-dev))  |
