@@ -1,4 +1,4 @@
-package org.aerogear.digger.model;
+package org.aerogear.digger.client.model;
 
 /**
  * Represents the status of a build.

@@ -10,7 +10,7 @@
         </layout>
     </appender>
 
-    <logger name="org.aerogear.digger">
+    <logger name="org.aerogear.digger.client">
         <level value="DEBUG"/>
     </logger>
 

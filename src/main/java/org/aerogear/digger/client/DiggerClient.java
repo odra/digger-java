@@ -1,12 +1,12 @@
-package org.aerogear.digger;
+package org.aerogear.digger.client;
 
 import com.offbytwo.jenkins.JenkinsServer;
-import org.aerogear.digger.model.BuildStatus;
-import org.aerogear.digger.services.ArtifactsService;
-import org.aerogear.digger.services.BuildService;
-import org.aerogear.digger.services.JobService;
-import org.aerogear.digger.util.DiggerClientException;
-import org.aerogear.digger.util.JenkinsAuth;
+import org.aerogear.digger.client.model.BuildStatus;
+import org.aerogear.digger.client.services.BuildService;
+import org.aerogear.digger.client.util.DiggerClientException;
+import org.aerogear.digger.client.util.JenkinsAuth;
+import org.aerogear.digger.client.services.ArtifactsService;
+import org.aerogear.digger.client.services.JobService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

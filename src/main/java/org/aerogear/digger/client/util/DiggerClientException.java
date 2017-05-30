@@ -1,4 +1,4 @@
-package org.aerogear.digger.util;
+package org.aerogear.digger.client.util;
 
 /**
  * Represents internal client exception

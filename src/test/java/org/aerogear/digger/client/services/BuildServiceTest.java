@@ -1,9 +1,9 @@
-package org.aerogear.digger.services;
+package org.aerogear.digger.client.services;
 
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.*;
-import org.aerogear.digger.model.BuildStatus;
-import org.aerogear.digger.util.DiggerClientException;
+import org.aerogear.digger.client.model.BuildStatus;
+import org.aerogear.digger.client.util.DiggerClientException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

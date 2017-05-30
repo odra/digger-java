@@ -1,4 +1,4 @@
-package org.aerogear.digger.services;
+package org.aerogear.digger.client.services;
 
 import com.offbytwo.jenkins.JenkinsServer;
 import org.jtwig.JtwigModel;
