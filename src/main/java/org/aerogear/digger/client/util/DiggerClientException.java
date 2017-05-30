@@ -5,24 +5,24 @@ package org.aerogear.digger.client.util;
  */
 public class DiggerClientException extends Exception {
 
-  public DiggerClientException() {
-    super();
-  }
+    public DiggerClientException() {
+        super();
+    }
 
-  public DiggerClientException(String message) {
-    super(message);
-  }
+    public DiggerClientException(String message) {
+        super(message);
+    }
 
-  public DiggerClientException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public DiggerClientException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public DiggerClientException(Throwable cause) {
-    super(cause);
-  }
+    public DiggerClientException(Throwable cause) {
+        super(cause);
+    }
 
-  @Override
-  public Throwable fillInStackTrace() {
-    return null;
-  }
+    @Override
+    public Throwable fillInStackTrace() {
+        return null;
+    }
 }
