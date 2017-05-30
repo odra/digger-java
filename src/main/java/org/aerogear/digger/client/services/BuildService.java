@@ -8,7 +8,7 @@ import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueItem;
 import com.offbytwo.jenkins.model.QueueReference;
 import org.aerogear.digger.client.DiggerClient;
-import org.aerogear.digger.client.model.BuildStatus;
+import org.aerogear.digger.client.model.BuildTriggerStatus;
 import org.aerogear.digger.client.util.DiggerClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +82,7 @@ public class BuildService {
      * @throws InterruptedException if a problem occurs during sleeping between checks
      * @see DiggerClient#build(String, long)
      */
-    public BuildStatus build(JenkinsServer jenkinsServer, String jobName, long timeout) throws IOException, InterruptedException {
+    public BuildTriggerStatus build(JenkinsServer jenkinsServer, String jobName, long timeout) throws IOException, InterruptedException {
         final long whenToTimeout = System.currentTimeMillis() + timeout;
 
         LOG.debug("Going to build job with name: {}", jobName);
@@ -124,10 +124,10 @@ public class BuildService {
 
             if (queueItem.isCancelled()) {
                 LOG.debug("Queue item is cancelled. Returning CANCELLED_IN_QUEUE");
-                return new BuildStatus(BuildStatus.State.CANCELLED_IN_QUEUE, -1);
+                return new BuildTriggerStatus(BuildTriggerStatus.State.CANCELLED_IN_QUEUE, -1);
             } else if (queueItem.isStuck()) {
                 LOG.debug("Queue item is stuck. Returning STUCK_IN_QUEUE");
-                return new BuildStatus(BuildStatus.State.STUCK_IN_QUEUE, -1);
+                return new BuildTriggerStatus(BuildTriggerStatus.State.STUCK_IN_QUEUE, -1);
             }
 
             // do not return -1 if blocked.
@@ -137,7 +137,7 @@ public class BuildService {
 
             if (executable != null) {
                 LOG.debug("Build has an executable. Returning build number: {}", executable.getNumber());
-                return new BuildStatus(BuildStatus.State.BUILDING, executable.getNumber().intValue());
+                return new BuildTriggerStatus(BuildTriggerStatus.State.STARTED_BUILDING, executable.getNumber().intValue());
             } else {
                 LOG.debug("Build did not start executing yet.");
                 if (whenToTimeout > System.currentTimeMillis()) {
@@ -145,7 +145,7 @@ public class BuildService {
                     Thread.sleep(pollPeriod);
                 } else {
                     LOG.debug("Timeout period has exceeded. Returning TIMED_OUT.");
-                    return new BuildStatus(BuildStatus.State.TIMED_OUT, -1);
+                    return new BuildTriggerStatus(BuildTriggerStatus.State.TIMED_OUT, -1);
                 }
             }
         }

@@ -1,18 +1,21 @@
 package org.aerogear.digger.client.model;
 
 /**
- * Represents the status of a build.
+ * Represents the status of a build that is just triggered.
  * <p>
  * The field {@link #buildNumber} will only be set if the
- * {@link #state} is {@link State#BUILDING}.
+ * {@link #state} is {@link State#STARTED_BUILDING}.
+ * <p>
+ * This entity does not represent the details of a past build. It provides enough
+ * information to see if a build has left the queue and started building.
  **/
-public class BuildStatus {
+public class BuildTriggerStatus {
 
     public enum State {
         /**
          * Build is out of the queue and it is currently being executed.
          */
-        BUILDING,
+        STARTED_BUILDING,
 
         /**
          * The max time to wait for the build get executed has passed.
@@ -35,7 +38,7 @@ public class BuildStatus {
     private final State state;
     private final int buildNumber;
 
-    public BuildStatus(State state, int buildNumber) {
+    public BuildTriggerStatus(State state, int buildNumber) {
         this.state = state;
         this.buildNumber = buildNumber;
     }
@@ -49,7 +52,7 @@ public class BuildStatus {
 
     /**
      * This should only be valid if the
-     * {@link #state} is {@link State#BUILDING}.
+     * {@link #state} is {@link State#STARTED_BUILDING}.
      *
      * @return the build number assigned by Jenkins
      */
