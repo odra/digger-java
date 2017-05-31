@@ -1,12 +1,7 @@
 package org.aerogear.digger.client.services;
 
 import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.model.Build;
-import com.offbytwo.jenkins.model.BuildWithDetails;
-import com.offbytwo.jenkins.model.Executable;
-import com.offbytwo.jenkins.model.JobWithDetails;
-import com.offbytwo.jenkins.model.QueueItem;
-import com.offbytwo.jenkins.model.QueueReference;
+import com.offbytwo.jenkins.model.*;
 import org.aerogear.digger.client.DiggerClient;
 import org.aerogear.digger.client.model.BuildTriggerStatus;
 import org.aerogear.digger.client.util.DiggerClientException;
@@ -14,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -67,6 +64,44 @@ public class BuildService {
             return buildWithDetails.getConsoleOutputText();
         } catch (IOException e) {
             LOG.error("Problem when fetching logs for {0} {1}", jobName, buildNumber, e);
+            throw new DiggerClientException(e);
+        }
+    }
+
+    /**
+     * Returns the build history for a job. As reported by {@link JobWithDetails#getBuilds()} it will return max 100 most-recent builds.
+     * <p>
+     * Please note that this approach will take some time since we first fetch the builds in 1 call, then fetch build details in 1 call per build.
+     *
+     * @param jenkins Jenkins server client
+     * @param jobName name of the job
+     * @return the build history
+     * @throws DiggerClientException if connection problems occur
+     */
+    public List<BuildWithDetails> getBuildHistory(JenkinsServer jenkins, String jobName) throws DiggerClientException {
+        final JobWithDetails job;
+        try {
+            job = jenkins.getJob(jobName);
+            if (job == null) {
+                LOG.error("Cannot fetch job from jenkins {0}", jobName);
+                throw new DiggerClientException("Cannot fetch job from jenkins");
+            }
+            final List<Build> builds = job.getBuilds();
+
+            final List<BuildWithDetails> returnValue = new ArrayList<BuildWithDetails>();
+
+            for (Build build : builds) {
+                try {
+                    returnValue.add(build.details());
+                } catch (IOException e) {
+                    LOG.error("Error while fetching the details for job {} with build number", jobName, build.getNumber(), e);
+                    // re-raise it so the the outer block catches it and creates a DiggerClientException out of it
+                    throw e;
+                }
+            }
+            return returnValue;
+        } catch (IOException e) {
+            LOG.error("Problem when getting the build history for job {0}", jobName, e);
             throw new DiggerClientException(e);
         }
     }

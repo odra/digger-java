@@ -1,12 +1,14 @@
 package org.aerogear.digger.client;
 
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.model.BuildWithDetails;
+import com.offbytwo.jenkins.model.JobWithDetails;
 import org.aerogear.digger.client.model.BuildTriggerStatus;
+import org.aerogear.digger.client.services.ArtifactsService;
 import org.aerogear.digger.client.services.BuildService;
+import org.aerogear.digger.client.services.JobService;
 import org.aerogear.digger.client.util.DiggerClientException;
 import org.aerogear.digger.client.util.JenkinsAuth;
-import org.aerogear.digger.client.services.ArtifactsService;
-import org.aerogear.digger.client.services.JobService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Digger Java Client interact with Digger Jenkins api.
@@ -206,5 +209,18 @@ public class DiggerClient {
      */
     public String getBuildLogs(String jobName, int buildNumber) throws DiggerClientException {
         return buildService.getBuildLogs(jenkinsServer, jobName, buildNumber);
+    }
+
+    /**
+     * Returns the build history for a job. As reported by {@link JobWithDetails#getBuilds()} it will return max 100 most-recent builds.
+     * <p>
+     * Please note that this approach will take some time since we first fetch the builds in 1 call, then fetch build details in 1 call per build.
+     *
+     * @param jobName name of the job
+     * @return the build history
+     * @throws DiggerClientException if connection problems occur
+     */
+    public List<BuildWithDetails> getBuildHistory(String jobName) throws DiggerClientException {
+        return buildService.getBuildHistory(jenkinsServer, jobName);
     }
 }

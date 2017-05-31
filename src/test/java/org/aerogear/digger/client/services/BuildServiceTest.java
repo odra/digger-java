@@ -1,5 +1,6 @@
 package org.aerogear.digger.client.services;
 
+import com.google.common.collect.Lists;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.*;
 import org.aerogear.digger.client.model.BuildTriggerStatus;
@@ -10,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -151,6 +154,36 @@ public class BuildServiceTest {
         String logs = service.getBuildLogs(jenkinsServer, "artifact", 1);
 
         assertThat(logs).isEqualTo(expectedLogs);
+    }
+
+    @Test(expected = DiggerClientException.class)
+    public void shouldThrowExceptionIfJobForBuildHistoryCannotBeFound() throws Exception {
+        when(jenkinsServer.getJob(anyString())).thenReturn(null);
+        service.getBuildHistory(jenkinsServer, "does-not-exist");
+    }
+
+    @Test
+    public void shouldFetchBuildHistory() throws Exception {
+        JobWithDetails job = mock(JobWithDetails.class);
+
+        Build build1 = mock(Build.class);
+        Build build2 = mock(Build.class);
+
+        BuildWithDetails buildDetails1 = mock(BuildWithDetails.class);
+        BuildWithDetails buildDetails2 = mock(BuildWithDetails.class);
+
+        when(jenkinsServer.getJob(anyString())).thenReturn(job);
+
+        when(job.getBuilds()).thenReturn(Lists.newArrayList(build1, build2));
+
+        when(build1.details()).thenReturn(buildDetails1);
+        when(build2.details()).thenReturn(buildDetails2);
+
+        final List<BuildWithDetails> detailsList = service.getBuildHistory(jenkinsServer, "some-job");
+
+        assertThat(detailsList).hasSize(2);
+        assertThat(detailsList.get(0)).isSameAs(buildDetails1);
+        assertThat(detailsList.get(1)).isSameAs(buildDetails2);
     }
 
 }
