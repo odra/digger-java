@@ -25,6 +25,21 @@
         <assertj-core.version>3.6.1</assertj-core.version>
     </properties>
 
+    <scm>
+        <connection>scm:git:git://github.com/aerogear/digger-java.git</connection>
+        <developerConnection>scm:git:git@github.com:aerogear/digger-java.git</developerConnection>
+        <url>https://github.com/aerogear/digger-java</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <issueManagement>
         <system>JIRA</system>
         <url>https://issues.jboss.org/browse/AGDIGGER</url>
