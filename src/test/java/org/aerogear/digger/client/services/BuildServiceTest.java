@@ -58,20 +58,20 @@ public class BuildServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfJobCannotBeFound() throws Exception {
-        service.build(jenkinsServer, "UNKNOWN", 10000);
+        service.build(jenkinsServer, "UNKNOWN", 10000, null);
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionIfJenkinsDoesNotReturnQueueReference() throws Exception {
         Mockito.when(mockJob.build()).thenReturn(null);
-        service.build(jenkinsServer, "TEST", 10000);
+        service.build(jenkinsServer, "TEST", 10000, null);
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionIfQueueItemIsNullForReference() throws Exception {
         Mockito.when(mockJob.build()).thenReturn(queueReference);
         Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(null);
-        service.build(jenkinsServer, "TEST", 10000);
+        service.build(jenkinsServer, "TEST", 10000, null);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class BuildServiceTest {
         Mockito.when(mockJob.build()).thenReturn(queueReference);
         Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItem);
 
-        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 10000);
+        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 10000, null);
         assertThat(buildTriggerStatus).isNotNull();
         assertThat(buildTriggerStatus.getState()).isEqualTo(BuildTriggerStatus.State.CANCELLED_IN_QUEUE);
     }
@@ -95,7 +95,7 @@ public class BuildServiceTest {
         Mockito.when(mockJob.build()).thenReturn(queueReference);
         Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItem);
 
-        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 10000);
+        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 10000, null);
         assertThat(buildTriggerStatus).isNotNull();
         assertThat(buildTriggerStatus.getState()).isEqualTo(BuildTriggerStatus.State.STUCK_IN_QUEUE);
     }
@@ -109,7 +109,7 @@ public class BuildServiceTest {
 
         Mockito.when(mockJob.build()).thenReturn(queueReference);
         Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItem);
-        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 10000);
+        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 10000, null);
 
         assertThat(buildTriggerStatus).isNotNull();
         assertThat(buildTriggerStatus.getState()).isEqualTo(BuildTriggerStatus.State.STARTED_BUILDING);
@@ -127,7 +127,7 @@ public class BuildServiceTest {
         Mockito.when(mockJob.build()).thenReturn(queueReference);
         // return `not-building` for the first 2 checks, then return `building`
         Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItemNotBuildingYet, queueItemNotBuildingYet, queueItemBuilding);
-        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 10000L);
+        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 10000L, null);
 
         assertThat(buildTriggerStatus).isNotNull();
         assertThat(buildTriggerStatus.getState()).isEqualTo(BuildTriggerStatus.State.STARTED_BUILDING);
@@ -142,7 +142,7 @@ public class BuildServiceTest {
 
         Mockito.when(mockJob.build()).thenReturn(queueReference);
         Mockito.when(jenkinsServer.getQueueItem(queueReference)).thenReturn(queueItemNotBuildingYet);
-        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 500L);
+        final BuildTriggerStatus buildTriggerStatus = service.build(jenkinsServer, "TEST", 500L, null);
 
         assertThat(buildTriggerStatus).isNotNull();
         assertThat(buildTriggerStatus.getState()).isEqualTo(BuildTriggerStatus.State.TIMED_OUT);

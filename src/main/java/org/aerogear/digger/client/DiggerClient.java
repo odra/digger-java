@@ -34,6 +34,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import java.util.HashMap;
+
 /**
  * Digger Java Client interact with Digger Jenkins api.
  */
@@ -137,6 +139,23 @@ public class DiggerClient {
     }
 
     /**
+     * Create new Digger parameterized job on Jenkins platform
+     *
+     * @param name      job name that can be used later to reference job
+     * @param gitRepo   git repository url (full git repository url. e.g git@github.com:wtrocki/helloworld-android-gradle.git
+     * @param gitBranch git repository branch (default branch used to checkout source code)
+     * @param map HashMap<String. BuildParameter> to be included in the template 
+     * @throws DiggerClientException if something goes wrong
+     */
+    public void createParameterizedJob(String name, String gitRepo, String gitBranch, HashMap map) throws DiggerClientException {
+        try {
+            jobService.createWithParams(this.jenkinsServer, name, gitRepo, gitBranch, map);
+        } catch (Throwable e) {
+            throw new DiggerClientException(e);
+        }
+    }
+
+    /**
      * Triggers a build for the given job and waits until it leaves the queue and actually starts.
      * <p>
      * Jenkins puts the build requests in a queue and once there is a slave available, it starts building
@@ -159,7 +178,7 @@ public class DiggerClient {
      */
     public BuildTriggerStatus build(String jobName, long timeout) throws DiggerClientException {
         try {
-            return buildService.build(this.jenkinsServer, jobName, timeout);
+            return buildService.build(this.jenkinsServer, jobName, timeout, null);
         } catch (IOException e) {
             LOG.debug("Exception while connecting to Jenkins", e);
             throw new DiggerClientException(e);
@@ -174,7 +193,7 @@ public class DiggerClient {
 
     /**
      * Triggers a build for the given job and waits until it leaves the queue and actually starts.
-     * <p>
+     * <p>''
      * Calls {@link #build(String, long)} with a default timeout of {@link #DEFAULT_BUILD_TIMEOUT}.
      *
      * @param jobName name of the job
@@ -184,6 +203,21 @@ public class DiggerClient {
      */
     public BuildTriggerStatus build(String jobName) throws DiggerClientException {
         return this.build(jobName, DEFAULT_BUILD_TIMEOUT);
+    }
+
+    public BuildStatus buildWithParams(String jobName, HashMap params) throws DiggerClientException {
+        try {
+            return buildService.build(this.jenkinsServer, jobName, DEFAULT_BUILD_TIMEOUT, params);
+        } catch (IOException e) {
+            LOG.debug("Exception while connecting to Jenkins", e);
+            throw new DiggerClientException(e);
+        } catch (InterruptedException e) {
+            LOG.debug("Exception while waiting on Jenkins", e);
+            throw new DiggerClientException(e);
+        } catch (Throwable e) {
+            LOG.debug("Exception while triggering a build", e);
+            throw new DiggerClientException(e);
+        }
     }
 
     /**

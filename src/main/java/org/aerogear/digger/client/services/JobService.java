@@ -21,14 +21,19 @@ import org.jtwig.JtwigTemplate;
 
 import java.io.IOException;
 
+import java.util.HashMap;
+
 /**
  * Create digger job on jenkins platform
  */
 public class JobService {
 
-    private final static String GIT_REPO_URL = "GIT_REPO_URL";
-    private final static String GIT_REPO_BRANCH = "GIT_REPO_BRANCH";
+    private final static String GIT_REPO_URL_LABEL = "GIT_REPO_URL";
+    private final static String GIT_REPO_BRANCH_LABEL = "GIT_REPO_BRANCH";
+    private final static String JOB_PARAMS_LABEL = "JOB_PARAMS";
     private static final String JOB_TEMPLATE_PATH = "templates/job.xml";
+    private static final String JOB_PARAMS_TEMPLATE_PATH = "templates/job-parameters.xml";
+
 
     /**
      * Create new digger job on jenkins platform
@@ -40,7 +45,27 @@ public class JobService {
      */
     public void create(JenkinsServer jenkinsServer, String name, String gitRepo, String gitBranch) throws IOException {
         JtwigTemplate template = JtwigTemplate.classpathTemplate(JOB_TEMPLATE_PATH);
-        JtwigModel model = JtwigModel.newModel().with(GIT_REPO_URL, gitRepo).with(GIT_REPO_BRANCH, gitBranch);
+        JtwigModel model = JtwigModel.newModel()
+            .with(GIT_REPO_URL_LABEL, gitRepo)
+            .with(GIT_REPO_BRANCH_LABEL, gitBranch);
+        jenkinsServer.createJob(name, template.render(model));
+    }
+
+    /**
+     * Create new digger parameterized job on jenkins platform
+     *
+     * @param jenkinsServer Jenkins server client
+     * @param name          job name that can be used later to reference job
+     * @param gitRepo       git repository url (full git repository url. e.g git@github.com:digger/helloworld.git
+     * @param map HashMap<String. BuildParameter> to be included in the template
+     * @param gitBranch     git repository branch (default branch used to checkout source code)
+     */
+    public void createWithParams(JenkinsServer jenkinsServer, String name, String gitRepo, String gitBranch, HashMap params) throws IOException {
+        JtwigTemplate template = JtwigTemplate.classpathTemplate(JOB_PARAMS_TEMPLATE_PATH);
+        JtwigModel model = JtwigModel.newModel()
+            .with(GIT_REPO_URL_LABEL, gitRepo)
+            .with(GIT_REPO_BRANCH_LABEL, gitBranch)
+            .with(JOB_PARAMS_LABEL, params);
         jenkinsServer.createJob(name, template.render(model));
     }
 }

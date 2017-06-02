@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.HashMap;
+
 
 /**
  * Provides functionality to trigger a build.
@@ -132,7 +134,7 @@ public class BuildService {
      * @throws InterruptedException if a problem occurs during sleeping between checks
      * @see DiggerClient#build(String, long)
      */
-    public BuildTriggerStatus build(JenkinsServer jenkinsServer, String jobName, long timeout) throws IOException, InterruptedException {
+    public BuildTriggerStatus build(JenkinsServer jenkinsServer, String jobName, long timeout, HashMap map) throws IOException, InterruptedException {
         final long whenToTimeout = System.currentTimeMillis() + timeout;
 
         LOG.debug("Going to build job with name: {}", jobName);
@@ -144,7 +146,13 @@ public class BuildService {
             throw new IllegalArgumentException("Unable to find job for name '" + jobName + "'");
         }
 
-        final QueueReference queueReference = job.build();
+        final QueueReference queueReference;
+
+        if (map == null) {
+            queueReference = job.build();
+        } else {
+            queueReference = job.build(map);
+        }
         if (queueReference == null) {
             // this is probably an implementation problem we have here
             LOG.debug("Queue reference cannot be null!");
